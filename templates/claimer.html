@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Claim Lost Item</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #42a5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: #6f4e37;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .navbar h3 {
+            margin: 0;
+        }
+
+        .logout-btn {
+            background: white;
+            color: #6f4e37;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ddd;
+        }
+
+        .container {
+            width: 400px;
+            margin: 60px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .top-bar {
+            height: 6px;
+            background: #6f4e37;
+            border-radius: 12px 12px 0 0;
+            margin: -30px -30px 20px -30px;
+        }
+
+        h2 {
+            color: #444;
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #42a5f5;
+            box-shadow: 0 0 8px rgba(66, 165, 245, 0.4);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 18px;
+            border: none;
+            border-radius: 8px;
+            background-color: #6f4e37;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #5a3d2b;
+            transform: scale(1.03);
+        }
+
+        .flash {
+            text-align: center;
+            margin-top: 10px;
+            color: green;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR WITH LOGOUT -->
+<div class="navbar">
+    <h3>Lost & Found System</h3>
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+</div>
+
+<div class="container">
+
+    <div class="top-bar"></div>
+
+    <h2>Claim Lost Item</h2>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('claimer') }}">
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="text" name="phone" placeholder="Phone Number" required>
+        <input type="text" name="course" placeholder="Course" required>
+        <input type="text" name="lost_item" placeholder="Lost Item" required>
+        <input type="date" name="date_lost" required>
+
+        <button type="submit">Submit Claim</button>
+    </form>
+
+</div>
+
+</body>
+</html>

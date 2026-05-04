@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Report Item</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #42a5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav {
+            background: #6f4e37;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 15px;
+            border-radius: 6px;
+        }
+
+        .nav a:hover {
+            background: #5a3d2b;
+        }
+
+        .report-container {
+            width: 520px;
+            margin: 50px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+        }
+
+        h2 { text-align: center; }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #6f4e37;
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .flash {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .success { color: green; }
+        .danger { color: red; }
+    </style>
+</head>
+
+<body>
+
+<div class="nav">
+    <a href="{{ url_for('report') }}">Report Item</a>
+    <a href="{{ url_for('claimer') }}">Claimer</a>
+    <a href="{{ url_for('qr_scanner') }}">QR Scanner</a>
+    <a href="{{ url_for('search') }}">Search</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</div>
+
+<div class="report-container">
+
+    <h2>Report Lost / Found Item</h2>
+
+    <p>Welcome, {{ username }}</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <label>Item Name</label>
+        <input type="text" name="name" required>
+
+        <label>Description</label>
+        <textarea name="description"></textarea>
+
+        <label>Location</label>
+        <input type="text" name="location">
+
+        <label>Status</label>
+        <select name="status">
+            <option value="Lost">Lost</option>
+            <option value="Found">Found</option>
+        </select>
+
+        <label>Reporter Name</label>
+        <input type="text" name="reporter_name" required>
+
+        <label>Reporter Phone</label>
+        <input type="text" name="reporter_phone" required>
+
+        <label>Upload Image</label>
+        <input type="file" name="image" required>
+
+        <button type="submit">Submit</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
