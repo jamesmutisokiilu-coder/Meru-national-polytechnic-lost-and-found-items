@@ -14,7 +14,7 @@ app.secret_key = os.environ.get("SECRET_KEY", "super-secret-key")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "lost_found.db")
 
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "static/uploads")
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -68,10 +68,11 @@ def init_db():
     conn.commit()
     conn.close()
 
+
 init_db()
 
 
-# ================= AUTH =================
+# ================= AUTH DECORATORS =================
 def login_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -85,6 +86,7 @@ def admin_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if not session.get("admin"):
+            flash("Admin access required!", "danger")
             return redirect(url_for("login"))
         return f(*args, **kwargs)
     return wrapper
@@ -128,14 +130,17 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        # ADMIN LOGIN (change in production)
+        # ADMIN LOGIN
         if username == "admin" and password == "1234":
             session.clear()
             session["admin"] = True
             return redirect(url_for("admin_dashboard"))
 
         conn = get_db_connection()
-        user = conn.execute("SELECT * FROM users WHERE username=?", (username,)).fetchone()
+        user = conn.execute(
+            "SELECT * FROM users WHERE username=?",
+            (username,)
+        ).fetchone()
         conn.close()
 
         if user and check_password_hash(user["password"], password):
@@ -159,7 +164,6 @@ def report():
             flash("Image required!", "danger")
             return redirect(url_for("report"))
 
-        # safer extension check
         if "." not in file.filename:
             flash("Invalid file!", "danger")
             return redirect(url_for("report"))
@@ -273,7 +277,6 @@ def delete_item(item_id):
     conn.execute("DELETE FROM items WHERE id=?", (item_id,))
     conn.commit()
     conn.close()
-    flash("Item deleted successfully!", "success")
     return redirect(url_for("admin_dashboard"))
 
 
@@ -310,7 +313,7 @@ def logout():
     return redirect(url_for("login"))
 
 
-# ================= RUN (RENDER READY) =================
+# ================= RUN =================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
