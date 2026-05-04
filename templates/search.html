@@ -65,6 +65,7 @@ button {
     margin: 10px;
     padding: 15px;
     border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .card img {
@@ -78,6 +79,8 @@ button {
     padding: 5px 10px;
     color: white;
     border-radius: 5px;
+    display: inline-block;
+    margin-top: 5px;
 }
 
 .lost { background: red; }
@@ -86,6 +89,7 @@ button {
 .no-results {
     margin-top: 20px;
     color: white;
+    font-weight: bold;
 }
 </style>
 
@@ -94,6 +98,7 @@ button {
 <body>
 
 <div class="nav">
+    <a href="{{ url_for('home') }}">Home</a>
     <a href="{{ url_for('report') }}">Report Item</a>
     <a href="{{ url_for('search') }}">Search</a>
     <a href="{{ url_for('logout') }}">Logout</a>
@@ -105,7 +110,7 @@ button {
 
 <form method="GET" action="{{ url_for('search') }}">
     <input type="text" name="search" placeholder="Search item..." value="{{ query or '' }}">
-    
+
     <select name="status">
         <option value="">All</option>
         <option value="Lost">Lost</option>
@@ -117,11 +122,15 @@ button {
 
 <div class="container">
 
-{% if results %}
+{% if results and results|length > 0 %}
+
     {% for item in results %}
         <div class="card">
+
             {% if item.image %}
-                <img src="{{ url_for('static', filename='uploads/' + item.image) }}">
+                <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="Item image">
+            {% else %}
+                <p>No image available</p>
             {% endif %}
 
             <h3>{{ item.item_name }}</h3>
@@ -131,8 +140,10 @@ button {
             <span class="status {% if item.status == 'Lost' %}lost{% else %}found{% endif %}">
                 {{ item.status }}
             </span>
+
         </div>
     {% endfor %}
+
 {% else %}
     <div class="no-results">
         No items found.
